@@ -1,0 +1,5 @@
+# Aqui tá uma configuração básica de gitignore pra caso de uso com venv
+bin/*
+lib/*
+include/*
+__pycache__/*
