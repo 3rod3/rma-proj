@@ -44,12 +44,12 @@ if clientID != -1:
 
     # Handle para as juntas das RODAS
     returnCode, l_wheel = sim.simxGetObjectHandle(clientID,
-                                                  '_leftMotor',
+                                                  '_leftMotor1',
                                                   sim.simx_opmode_oneshot_wait)
     print('Handle return code:', (returnCode, l_wheel))
 
     returnCode, r_wheel = sim.simxGetObjectHandle(clientID,
-                                                  '_rightMotor',
+                                                  '_rightMotor1',
                                                   sim.simx_opmode_oneshot_wait)
     print('Handle return code:', (returnCode, r_wheel))
 
