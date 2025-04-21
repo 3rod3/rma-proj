@@ -119,7 +119,7 @@ if clientID != -1:
     lastTime = startTime
 
     print("tempo do momento:")
-    while px1 != 2 and py1 != -2:
+    while px1 != 4 and py1 != -4:
         # código de tempo
         now = time.time()
         dt = now - lastTime
@@ -132,17 +132,17 @@ if clientID != -1:
 
         # handle de sensores e reitura sensores
         returnCode, l_sensor = sim.simxGetObjectHandle(clientID,
-                                                       'psensor0',
+                                                       'sensor0',
                                                        sim.simx_opmode_oneshot_wait)
         print('Handle return code:', (returnCode, l_sensor))
 
         returnCode, r_sensor = sim.simxGetObjectHandle(clientID,
-                                                       'psensor1',
+                                                       'sensor1',
                                                        sim.simx_opmode_oneshot_wait)
         print('Handle return code:', (returnCode, r_sensor))
 
         returnCode, f_sensor = sim.simxGetObjectHandle(clientID,
-                                                       'psensor2',
+                                                       'sensor2',
                                                        sim.simx_opmode_oneshot_wait)
         print('Handle return code:', (returnCode, f_sensor))
 
@@ -169,8 +169,8 @@ if clientID != -1:
                                        sim.simx_opmode_oneshot_wait)
         print('estou andando reto')
         time.sleep(0.5)
-
-        if detectionState2 == False or (detectionState2 == True and detectpz2 >= 0.3):
+        
+        if not detectionState2:
 
             while (detectionState0 == True and detectpz0 <= 0.55) and (detectionState1 == True and detectpz1 <= 0.55):
 
@@ -247,23 +247,14 @@ if clientID != -1:
                                                          sim.simx_opmode_oneshot_wait)
 
                         # MHZ: Linter avisa que rad_ori pode ser unbound.
-                        if palpha > 0 and pbeta < 0:
-                            rad_ori = math.atan(
-                                abs(pbeta/palpha))+(-1)*(math.pi/2)
-                            ang_ori = (-1)*(((rad_ori*180)/math.pi))
-                        elif palpha > 0 and pbeta > 0:
-                            rad_ori = math.atan(abs(pbeta/palpha))
-                            ang_ori = ((rad_ori*180)/math.pi)+90
-                        elif palpha < 0 and pbeta > 0:
-                            rad_ori = math.atan(
-                                abs(pbeta/palpha))+(-1)*(math.pi/2)
-                            ang_ori = (-1)*((rad_ori*180)/math.pi)+180
-                        elif palpha < 0 and pbeta < 0:
-                            rad_ori = math.atan(abs(pbeta/palpha))
-                            ang_ori = ((rad_ori*180)/math.pi)+270
-                        print('palpha = ', palpha, 'e pbeta = ', pbeta)
-                        print('rad orient = ', rad_ori)
+                        if pgamma > 0:
+                            ang_ori = ((pgamma*180)/math.pi)
+                        elif pgamma < 0:
+                            ang_ori = -1*(-1*((pgamma*180)/math.pi)-180)+180
+
+                        ang_ori = float("%0.2f" %(ang_ori))
                         print('ang orient = ', ang_ori)
+                        
                         kp = 1
                         v2 = 0.2
 
@@ -308,23 +299,12 @@ if clientID != -1:
                                                          robotHandle,
                                                          -1,
                                                          sim.simx_opmode_oneshot_wait)
-                        if palpha > 0 and pbeta < 0:
-                            rad_ori = math.atan(
-                                abs(pbeta/palpha))+(-1)*(math.pi/2)
-                            ang_ori = (-1)*(((rad_ori*180)/math.pi))
-                        elif palpha > 0 and pbeta > 0:
-                            rad_ori = math.atan(abs(pbeta/palpha))
-                            ang_ori = ((rad_ori*180)/math.pi)+90
-                        elif palpha < 0 and pbeta > 0:
-                            rad_ori = math.atan(
-                                abs(pbeta/palpha))+(-1)*(math.pi/2)
-                            ang_ori = (-1)*((rad_ori*180)/math.pi)+180
-                        elif palpha < 0 and pbeta < 0:
-                            rad_ori = math.atan(abs(pbeta/palpha))
-                            ang_ori = ((rad_ori*180)/math.pi)+270
+                        if pgamma > 0:
+                            ang_ori = ((pgamma*180)/math.pi)
+                        elif pgamma < 0:
+                            ang_ori = -1*(-1*((pgamma*180)/math.pi)-180)+180
 
-                        print('palpha = ', palpha, 'e pbeta = ', pbeta)
-                        print('rad orient = ', rad_ori)
+                        ang_ori = float("%0.2f" %(ang_ori))
                         print('ang orient = ', ang_ori)
 
                         kp = 1
@@ -388,22 +368,14 @@ if clientID != -1:
                                                      -1,
                                                      sim.simx_opmode_oneshot_wait)
 
-                    if palpha > 0 and pbeta < 0:
-                        rad_ori = math.atan(abs(pbeta/palpha))+(-1)*(math.pi/2)
-                        ang_ori = (-1)*(((rad_ori*180)/math.pi))
-                    elif palpha > 0 and pbeta > 0:
-                        rad_ori = math.atan(abs(pbeta/palpha))
-                        ang_ori = ((rad_ori*180)/math.pi)+90
-                    elif palpha < 0 and pbeta > 0:
-                        rad_ori = math.atan(abs(pbeta/palpha))+(-1)*(math.pi/2)
-                        ang_ori = (-1)*((rad_ori*180)/math.pi)+180
-                    elif palpha < 0 and pbeta < 0:
-                        rad_ori = math.atan(abs(pbeta/palpha))
-                        ang_ori = ((rad_ori*180)/math.pi)+270
+                    if pgamma > 0:
+                            ang_ori = ((pgamma*180)/math.pi)
+                    elif pgamma < 0:
+                            ang_ori = -1*(-1*((pgamma*180)/math.pi)-180)+180
 
-                    print('palpha = ', palpha, 'e pbeta = ', pbeta)
-                    print('rad orient = ', rad_ori)
+                    ang_ori = float("%0.2f" %(ang_ori))
                     print('ang orient = ', ang_ori)
+
 
                     sim.simxSetJointTargetVelocity(clientID,
                                                    r_wheel,
@@ -454,21 +426,12 @@ if clientID != -1:
                                                      -1,
                                                      sim.simx_opmode_oneshot_wait)
 
-                    if palpha > 0 and pbeta < 0:
-                        rad_ori = math.atan(abs(pbeta/palpha))+(-1)*(math.pi/2)
-                        ang_ori = (-1)*(((rad_ori*180)/math.pi))
-                    elif palpha > 0 and pbeta > 0:
-                        rad_ori = math.atan(abs(pbeta/palpha))
-                        ang_ori = ((rad_ori*180)/math.pi)+90
-                    elif palpha < 0 and pbeta > 0:
-                        rad_ori = math.atan(abs(pbeta/palpha))+(-1)*(math.pi/2)
-                        ang_ori = (-1)*((rad_ori*180)/math.pi)+180
-                    elif palpha < 0 and pbeta < 0:
-                        rad_ori = math.atan(abs(pbeta/palpha))
-                        ang_ori = ((rad_ori*180)/math.pi)+270
+                    if pgamma > 0:
+                            ang_ori = ((pgamma*180)/math.pi)
+                    elif pgamma < 0:
+                            ang_ori = -1*(-1*((pgamma*180)/math.pi)-180)+180
 
-                    print('palpha = ', palpha, 'e pbeta = ', pbeta)
-                    print('rad orient = ', rad_ori)
+                    ang_ori = float("%0.2f" %(ang_ori))
                     print('ang orient = ', ang_ori)
 
                     sim.simxSetJointTargetVelocity(clientID,
@@ -522,23 +485,12 @@ if clientID != -1:
                                                      -1,
                                                      sim.simx_opmode_oneshot_wait)
 
-                    if palpha > 0 and pbeta < 0:
-                        rad_ori = math.atan(
-                            abs(pbeta/palpha))+(-1)*(math.pi/2)
-                        ang_ori = (-1)*(((rad_ori*180)/math.pi))
-                    elif palpha > 0 and pbeta > 0:
-                        rad_ori = math.atan(abs(pbeta/palpha))
-                        ang_ori = ((rad_ori*180)/math.pi)+90
-                    elif palpha < 0 and pbeta > 0:
-                        rad_ori = math.atan(
-                            abs(pbeta/palpha))+(-1)*(math.pi/2)
-                        ang_ori = (-1)*((rad_ori*180)/math.pi)+180
-                    elif palpha < 0 and pbeta < 0:
-                        rad_ori = math.atan(abs(pbeta/palpha))
-                        ang_ori = ((rad_ori*180)/math.pi)+270
+                    if pgamma > 0:
+                            ang_ori = ((pgamma*180)/math.pi)
+                    elif pgamma < 0:
+                            ang_ori = -1*(-1*((pgamma*180)/math.pi)-180)+180
 
-                    print('palpha = ', palpha, 'e pbeta = ', pbeta)
-                    print('rad orient = ', rad_ori)
+                    ang_ori = float("%0.2f" %(ang_ori))
                     print('ang orient = ', ang_ori)
 
                     sim.simxSetJointTargetVelocity(clientID,
