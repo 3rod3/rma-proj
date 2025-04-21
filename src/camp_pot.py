@@ -136,7 +136,7 @@ if clientID != -1:
                         passo = passo + 1
                         continue
 
-                    elif
+                    #elif
     # ======================================================================
 
         now = time.time()

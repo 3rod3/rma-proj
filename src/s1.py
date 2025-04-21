@@ -34,6 +34,28 @@ import math
 # import matplotlib
 # ===================
 
+#Henri: criei uma função para ler e salvar informações dos sensores que são lidos varias vezes
+
+def lersensor(clientID,sensor):
+  [
+    returnCode,
+    detectionState,
+    [detectpx, detectpy, detectpz],
+    detectedObjectHandle,
+    detectedSurfaceNormalVector
+  ] = sim.simxReadProximitySensor(clientID,sensor,sim.simx_opmode_oneshot_wait)
+
+  print("return code = ", returncode,
+        "dectetionstate = ", detectionState,
+        "detectedPoint = ", [detectpx, detectpy, detectpz],
+        "detectedObjectHandle = ", detectedObjectHandle,
+        "detectedSurfaceNormalVector = ", detectedSurfaceNormalVector)
+
+  detectpx = float("%0.2f" % (detectpx))
+  detectpy = float("%0.2f" % (detectpy))
+  detectpz = float("%0.2f" % (detectpz))
+  return detectionState, detectpx, detectpy, detectpz
+
 print('Program started')
 sim.simxFinish(-1)  # just in case, close all opened connections
 # Connect to CoppeliaSim
@@ -124,65 +146,11 @@ if clientID != -1:
                                                        sim.simx_opmode_oneshot_wait)
         print('Handle return code:', (returnCode, f_sensor))
 
-        [
-            returnCode,
-            detectionState0,
-            [detectpx0, detectpy0, detectpz0],
-            detectedObjectHandle,
-            detectedSurfaceNormalVector
-        ] = sim.simxReadProximitySensor(clientID,
-                                        l_sensor,
-                                        sim.simx_opmode_oneshot_wait)
+        detectionState0, detectpx0, detectpy0, detectpz0 = lersensor(clientID,l_sensor)
+        
+        detectionState1, detectpx1, detectpy1, detectpz1 = lersensor(clientID,r_sensor)
 
-        detectpx0 = float("%0.2f" % (detectpx0))
-        detectpy0 = float("%0.2f" % (detectpy0))
-        detectpz0 = float("%0.2f" % (detectpz0))
-
-        print("return code = ", returncode,
-              "dectetionstate = ", detectionState0,
-              "detectedPoint = ", [detectpx0, detectpy0, detectpz0],
-              "detectedObjectHandle = ", detectedObjectHandle,
-              "detectedSurfaceNormalVector = ", detectedSurfaceNormalVector)
-
-        [
-            returnCode,
-            detectionState1,
-            [detectpx1, detectpy1, detectpz1],
-            detectedObjectHandle,
-            detectedSurfaceNormalVector
-        ] = sim.simxReadProximitySensor(clientID,
-                                        r_sensor,
-                                        sim.simx_opmode_oneshot_wait)
-
-        detectpx1 = float("%0.2f" % (detectpx1))
-        detectpy1 = float("%0.2f" % (detectpy1))
-        detectpz1 = float("%0.2f" % (detectpz1))
-
-        print("return code = ", returncode,
-              "dectetionstate = ", detectionState1,
-              "detectedPoint = ", [detectpx1, detectpy1, detectpz1],
-              "detectedObjectHandle = ", detectedObjectHandle,
-              "detectedSurfaceNormalVector = ", detectedSurfaceNormalVector)
-
-        [
-            returnCode,
-            detectionState2,
-            [detectpx2, detectpy2, detectpz2],
-            detectedObjectHandle,
-            detectedSurfaceNormalVector
-        ] = sim.simxReadProximitySensor(clientID,
-                                        f_sensor,
-                                        sim.simx_opmode_oneshot_wait)
-
-        detectpx2 = float("%0.2f" % (detectpx2))
-        detectpy2 = float("%0.2f" % (detectpy2))
-        detectpz2 = float("%0.2f" % (detectpz2))
-
-        print("return code = ", returncode,
-              "dectetionstate = ", detectionState2,
-              "detectedPoint = ", [detectpx2, detectpy2, detectpz2],
-              "detectedObjectHandle = ", detectedObjectHandle,
-              "detectedSurfaceNormalVector = ", detectedSurfaceNormalVector)
+        detectionState2, detectpx2, detectpy2, detectpz2 = lersensor(clientID,f_sensor)
 
         [
             returncode,
@@ -214,66 +182,14 @@ if clientID != -1:
                                               robotHandle,
                                               -1,
                                               sim.simx_opmode_oneshot_wait)
+                
 
-                [
-                    returnCode,
-                    detectionState0,
-                    [detectpx0, detectpy0, detectpz0],
-                    detectedObjectHandle,
-                    detectedSurfaceNormalVector
-                ] = sim.simxReadProximitySensor(clientID,
-                                                l_sensor,
-                                                sim.simx_opmode_oneshot_wait)
+                detectionState0, detectpx0, detectpy0, detectpz0 = lersensor(clientID,l_sensor)
+        
+                detectionState1, detectpx1, detectpy1, detectpz1 = lersensor(clientID,r_sensor)
 
-                print("return code = ", returncode,
-                      "dectetionstate = ", detectionState0,
-                      "detectedPoint = ", [detectpx0, detectpy0, detectpz0],
-                      "detectedObjectHandle = ", detectedObjectHandle,
-                      "detectedSurfaceNormalVector = ", detectedSurfaceNormalVector)
+                detectionState2, detectpx2, detectpy2, detectpz2 = lersensor(clientID,f_sensor)
 
-                detectpx0 = float("%0.2f" % (detectpx0))
-                detectpy0 = float("%0.2f" % (detectpy0))
-                detectpz0 = float("%0.2f" % (detectpz0))
-
-                [
-                    returnCode,
-                    detectionState1,
-                    [detectpx1, detectpy1, detectpz1],
-                    detectedObjectHandle,
-                    detectedSurfaceNormalVector
-                ] = sim.simxReadProximitySensor(clientID,
-                                                r_sensor,
-                                                sim.simx_opmode_oneshot_wait)
-
-                print("return code = ", returncode,
-                      "dectetionstate = ", detectionState1,
-                      "detectedPoint = ", [detectpx1, detectpy1, detectpz1],
-                      "detectedObjectHandle = ", detectedObjectHandle,
-                      "detectedSurfaceNormalVector = ", detectedSurfaceNormalVector)
-
-                detectpx1 = float("%0.2f" % (detectpx1))
-                detectpy1 = float("%0.2f" % (detectpy1))
-                detectpz1 = float("%0.2f" % (detectpz1))
-
-                [
-                    returnCode,
-                    detectionState2,
-                    [detectpx2, detectpy2, detectpz2],
-                    detectedObjectHandle,
-                    detectedSurfaceNormalVector
-                ] = sim.simxReadProximitySensor(clientID,
-                                                f_sensor,
-                                                sim.simx_opmode_oneshot_wait)
-
-                print("return code = ", returncode,
-                      "dectetionstate = ", detectionState2,
-                      "detectedPoint = ", [detectpx2, detectpy2, detectpz2],
-                      "detectedObjectHandle = ", detectedObjectHandle,
-                      "detectedSurfaceNormalVector = ", detectedSurfaceNormalVector)
-
-                detectpx2 = float("%0.2f" % (detectpx2))
-                detectpy2 = float("%0.2f" % (detectpy2))
-                detectpz2 = float("%0.2f" % (detectpz2))
 
                 sim.simxSetJointTargetVelocity(clientID,
                                                r_wheel,
@@ -297,65 +213,13 @@ if clientID != -1:
 
                 print("modo 2: lateral diferente, andando reto e corrigindo lateral")
 
-                [
-                    returnCode,
-                    detectionState0,
-                    [detectpx0, detectpy0, detectpz0],
-                    detectedObjectHandle,
-                    detectedSurfaceNormalVector
-                ] = sim.simxReadProximitySensor(clientID,
-                                                l_sensor,
-                                                sim.simx_opmode_oneshot_wait)
 
-                print("return code = ", returncode,
-                      "dectetionstate = ", detectionState0,
-                      "detectedPoint = ", [detectpx0, detectpy0, detectpz0],
-                      "detectedObjectHandle = ", detectedObjectHandle,
-                      "detectedSurfaceNormalVector = ", detectedSurfaceNormalVector)
+                detectionState0, detectpx0, detectpy0, detectpz0 = lersensor(clientID,l_sensor)
+        
+                detectionState1, detectpx1, detectpy1, detectpz1 = lersensor(clientID,r_sensor)
 
-                detectpx0 = float("%0.2f" % (detectpx0))
-                detectpy0 = float("%0.2f" % (detectpy0))
-                detectpz0 = float("%0.2f" % (detectpz0))
+                detectionState2, detectpx2, detectpy2, detectpz2 = lersensor(clientID,f_sensor)
 
-                [
-                    returnCode,
-                    detectionState1,
-                    [detectpx1, detectpy1, detectpz1],
-                    detectedObjectHandle,
-                    detectedSurfaceNormalVector
-                ] = sim.simxReadProximitySensor(clientID,
-                                                r_sensor,
-                                                sim.simx_opmode_oneshot_wait)
-
-                print("return code = ", returncode,
-                      "dectetionstate = ", detectionState1,
-                      "detectedPoint = ", [detectpx1, detectpy1, detectpz1],
-                      "detectedObjectHandle = ", detectedObjectHandle,
-                      "detectedSurfaceNormalVector = ", detectedSurfaceNormalVector)
-
-                detectpx1 = float("%0.2f" % (detectpx1))
-                detectpy1 = float("%0.2f" % (detectpy1))
-                detectpz1 = float("%0.2f" % (detectpz1))
-
-                [
-                    returnCode,
-                    detectionState2,
-                    [detectpx2, detectpy2, detectpz2],
-                    detectedObjectHandle,
-                    detectedSurfaceNormalVector
-                ] = sim.simxReadProximitySensor(clientID,
-                                                f_sensor,
-                                                sim.simx_opmode_oneshot_wait)
-
-                print("return code = ", returncode,
-                      "dectetionstate = ", detectionState2,
-                      "detectedPoint = ", [detectpx2, detectpy2, detectpz2],
-                      "detectedObjectHandle = ", detectedObjectHandle,
-                      "detectedSurfaceNormalVector = ", detectedSurfaceNormalVector)
-
-                detectpx2 = float("%0.2f" % (detectpx2))
-                detectpy2 = float("%0.2f" % (detectpy2))
-                detectpz2 = float("%0.2f" % (detectpz2))
 
                 now = time.time()
                 dt = now - lastTime
@@ -413,68 +277,13 @@ if clientID != -1:
                                                        sim.simx_opmode_oneshot_wait)
                         print('ang orient = ', ang_ori)
                         print('estou girando parcialmente')
-                        [
-                            returnCode,
-                            detectionState0,
-                            [detectpx0, detectpy0, detectpz0],
-                            detectedObjectHandle,
-                            detectedSurfaceNormalVector
-                        ] = sim.simxReadProximitySensor(clientID,
-                                                        l_sensor,
-                                                        sim.simx_opmode_oneshot_wait)
 
-                        print("return code = ", returncode,
-                              "dectetionstate = ", detectionState0,
-                              "detectedPoint = ", [
-                                  detectpx0, detectpy0, detectpz0],
-                              "detectedObjectHandle = ", detectedObjectHandle,
-                              " detectedSurfaceNormalVector = ", detectedSurfaceNormalVector)
+                        detectionState0, detectpx0, detectpy0, detectpz0 = lersensor(clientID,l_sensor)
+        
+                        detectionState1, detectpx1, detectpy1, detectpz1 = lersensor(clientID,r_sensor)
 
-                        detectpx0 = float("%0.2f" % (detectpx0))
-                        detectpy0 = float("%0.2f" % (detectpy0))
-                        detectpz0 = float("%0.2f" % (detectpz0))
+                        detectionState2, detectpx2, detectpy2, detectpz2 = lersensor(clientID,f_sensor)
 
-                        [
-                            returnCode,
-                            detectionState1,
-                            [detectpx1, detectpy1, detectpz1],
-                            detectedObjectHandle,
-                            detectedSurfaceNormalVector
-                        ] = sim.simxReadProximitySensor(clientID,
-                                                        r_sensor,
-                                                        sim.simx_opmode_oneshot_wait)
-
-                        print("return code = ", returncode,
-                              "dectetionstate = ", detectionState1,
-                              "detectedPoint = ", [
-                                  detectpx1, detectpy1, detectpz1],
-                              "detectedObjectHandle = ", detectedObjectHandle,
-                              "detectedSurfaceNormalVector = ", detectedSurfaceNormalVector)
-
-                        detectpx1 = float("%0.2f" % (detectpx1))
-                        detectpy1 = float("%0.2f" % (detectpy1))
-                        detectpz1 = float("%0.2f" % (detectpz1))
-
-                        [
-                            returnCode,
-                            detectionState2,
-                            [detectpx2, detectpy2, detectpz2],
-                            detectedObjectHandle,
-                            detectedSurfaceNormalVector
-                        ] = sim.simxReadProximitySensor(clientID,
-                                                        f_sensor,
-                                                        sim.simx_opmode_oneshot_wait)
-
-                        print("return code = ", returncode,
-                              "dectetionstate = ", detectionState2,
-                              "detectedPoint = ", [
-                                  detectpx2, detectpy2, detectpz2],
-                              "detectedObjectHandle = ", detectedObjectHandle,
-                              " detectedSurfaceNormalVector = ", detectedSurfaceNormalVector)
-
-                        detectpx2 = float("%0.2f" % (detectpx2))
-                        detectpy2 = float("%0.2f" % (detectpy2))
-                        detectpz2 = float("%0.2f" % (detectpz2))
 
                         if (detectionState0 == False or detectionState1 == False) or (detectpz0 <= 0.55 and detectpz1 <= 0.55) or detectpz2 < 0.3:
                             break
@@ -532,68 +341,13 @@ if clientID != -1:
 
                         print('ang orient = ', ang_ori)
                         print('estou girando parcialmente')
-                        [
-                            returnCode,
-                            detectionState0,
-                            [detectpx0, detectpy0, detectpz0],
-                            detectedObjectHandle,
-                            detectedSurfaceNormalVector
-                        ] = sim.simxReadProximitySensor(clientID,
-                                                        l_sensor,
-                                                        sim.simx_opmode_oneshot_wait)
 
-                        print("return code = ", returncode,
-                              "dectetionstate = ", detectionState0,
-                              "detectedPoint = ", [
-                                  detectpx0, detectpy0, detectpz0],
-                              "detectedObjectHandle = ", detectedObjectHandle,
-                              "detectedSurfaceNormalVector = ", detectedSurfaceNormalVector)
+                        detectionState0, detectpx0, detectpy0, detectpz0 = lersensor(clientID,l_sensor)
+        
+                        detectionState1, detectpx1, detectpy1, detectpz1 = lersensor(clientID,r_sensor)
 
-                        detectpx0 = float("%0.2f" % (detectpx0))
-                        detectpy0 = float("%0.2f" % (detectpy0))
-                        detectpz0 = float("%0.2f" % (detectpz0))
+                        detectionState2, detectpx2, detectpy2, detectpz2 = lersensor(clientID,f_sensor)
 
-                        [
-                            returnCode,
-                            detectionState1,
-                            [detectpx1, detectpy1, detectpz1],
-                            detectedObjectHandle,
-                            detectedSurfaceNormalVector
-                        ] = sim.simxReadProximitySensor(clientID,
-                                                        r_sensor,
-                                                        sim.simx_opmode_oneshot_wait)
-
-                        print("return code = ", returncode,
-                              "dectetionstate = ", detectionState1,
-                              "detectedPoint = ", [
-                                  detectpx1, detectpy1, detectpz1],
-                              "detectedObjectHandle = ", detectedObjectHandle,
-                              "detectedSurfaceNormalVector = ", detectedSurfaceNormalVector)
-
-                        detectpx1 = float("%0.2f" % (detectpx1))
-                        detectpy1 = float("%0.2f" % (detectpy1))
-                        detectpz1 = float("%0.2f" % (detectpz1))
-
-                        [
-                            returnCode,
-                            detectionState2,
-                            [detectpx2, detectpy2, detectpz2],
-                            detectedObjectHandle,
-                            detectedSurfaceNormalVector
-                        ] = sim.simxReadProximitySensor(clientID,
-                                                        f_sensor,
-                                                        sim.simx_opmode_oneshot_wait)
-
-                        print("return code = ", returncode,
-                              "dectetionstate = ", detectionState2,
-                              "detectedPoint = ", [
-                                  detectpx2, detectpy2, detectpz2],
-                              "detectedObjectHandle = ", detectedObjectHandle,
-                              " detectedSurfaceNormalVector = ", detectedSurfaceNormalVector)
-
-                        detectpx2 = float("%0.2f" % (detectpx2))
-                        detectpy2 = float("%0.2f" % (detectpy2))
-                        detectpz2 = float("%0.2f" % (detectpz2))
 
                         if (detectionState0 == False or detectionState1 == False) or (detectpz0 <= 0.55 and detectpz1 <= 0.55) or detectpz2 < 0.3:
                             break
