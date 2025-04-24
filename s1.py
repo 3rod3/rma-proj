@@ -146,11 +146,11 @@ if clientID != -1:
                                                        sim.simx_opmode_oneshot_wait)
         print('Handle return code:', (returnCode, f_sensor))
 
-        detectionState0, detectpx0, detectpy0, detectpz0 = lersensor(clientID,l_sensor)
+        detectionStateL, detectpx0, detectpy0, detectpz0 = lersensor(clientID,l_sensor)
         
-        detectionState1, detectpx1, detectpy1, detectpz1 = lersensor(clientID,r_sensor)
+        detectionStateR, detectpx1, detectpy1, detectpz1 = lersensor(clientID,r_sensor)
 
-        detectionState2, detectpx2, detectpy2, detectpz2 = lersensor(clientID,f_sensor)
+        detectionStateF, detectpx2, detectpy2, detectpz2 = lersensor(clientID,f_sensor)
 
         [
             returncode,
@@ -159,20 +159,21 @@ if clientID != -1:
                                       robotHandle,
                                       -1,
                                       sim.simx_opmode_oneshot_wait)
-        sim.simxSetJointTargetVelocity(clientID,
-                                       r_wheel,
-                                       v1,
-                                       sim.simx_opmode_oneshot_wait)
-        sim.simxSetJointTargetVelocity(clientID,
-                                       l_wheel,
-                                       v1,
-                                       sim.simx_opmode_oneshot_wait)
-        print('estou andando reto0')
-        time.sleep(0.5)
+        if not detectionStateF or detectpz2 > 0.7:
+            sim.simxSetJointTargetVelocity(clientID,
+                                        r_wheel,
+                                        v1,
+                                        sim.simx_opmode_oneshot_wait)
+            sim.simxSetJointTargetVelocity(clientID,
+                                        l_wheel,
+                                        v1,
+                                        sim.simx_opmode_oneshot_wait)
+            print('estou andando reto')
+        time.sleep(0.1)
         
-        if not detectionState2:
+        if detectionStateF and detectpz2 < 0.7:
 
-            while (detectionState0 == True and detectpz0 <= 0.55) and (detectionState1 == True and detectpz1 <= 0.55):
+            while detectionStateF and (detectionStateL == True and detectpz0 <= 0.55) and (detectionStateR == True and detectpz1 <= 0.55):
 
                 print("modo 1: lateral igual, andando reto")
                 [
@@ -184,11 +185,11 @@ if clientID != -1:
                                               sim.simx_opmode_oneshot_wait)
                 
 
-                detectionState0, detectpx0, detectpy0, detectpz0 = lersensor(clientID,l_sensor)
+                detectionStateL, detectpx0, detectpy0, detectpz0 = lersensor(clientID,l_sensor)
         
-                detectionState1, detectpx1, detectpy1, detectpz1 = lersensor(clientID,r_sensor)
+                detectionStateR, detectpx1, detectpy1, detectpz1 = lersensor(clientID,r_sensor)
 
-                detectionState2, detectpx2, detectpy2, detectpz2 = lersensor(clientID,f_sensor)
+                detectionStateF, detectpx2, detectpy2, detectpz2 = lersensor(clientID,f_sensor)
 
 
                 sim.simxSetJointTargetVelocity(clientID,
@@ -197,88 +198,84 @@ if clientID != -1:
                                                sim.simx_opmode_oneshot_wait)
                 sim.simxSetJointTargetVelocity(clientID,
                                                l_wheel,
-                                               v1,
+                                               -v1,
                                                sim.simx_opmode_oneshot_wait)
-                print('estou andando reto1')
+                print('estou só o pião da casa própria')
 
                 now = time.time()
                 dt = now - lastTime
                 t = t + dt
                 lastTime = now
                 print("tempo =", t, "\r")
-                if (detectionState0 == False or detectionState1 == False or (detectionState2 == True and detectpz2 < 0.5)):
-                    break
 
-            while (detectionState0 == True and detectpz0 > 0.55) or (detectionState1 == True and detectpz1 > 0.55):
+            while (detectionStateL == True and detectpz0 > 0.55) or (detectionStateR == True and detectpz1 > 0.55):
 
-                print("modo 2: lateral diferente, andando reto e corrigindo lateral")
+                # print("modo 2: lateral diferente, andando reto e corrigindo lateral")
 
-
-                detectionState0, detectpx0, detectpy0, detectpz0 = lersensor(clientID,l_sensor)
-        
-                detectionState1, detectpx1, detectpy1, detectpz1 = lersensor(clientID,r_sensor)
-
-                detectionState2, detectpx2, detectpy2, detectpz2 = lersensor(clientID,f_sensor)
+                # detectionStateL, detectpx0, detectpy0, detectpz0 = lersensor(clientID,l_sensor)        
+                # detectionStateR, detectpx1, detectpy1, detectpz1 = lersensor(clientID,r_sensor)
+                # detectionStateF, detectpx2, detectpy2, detectpz2 = lersensor(clientID,f_sensor)
 
 
-                now = time.time()
-                dt = now - lastTime
-                t = t + dt
-                lastTime = now
-                print("tempo =", t, "\r")
-                if detectpz0 > 0.55:
-                    while abs(ang_ori) >= 2:
+                # now = time.time()
+                # dt = now - lastTime
+                # t = t + dt
+                # lastTime = now
+                # print("tempo =", t, "\r")
+                # if detectpz0 > 0.55:
+                #     while abs(ang_ori) >= 2:
 
-                        print("modo 2.1: corrigindo lateral esquerdo")
-                        [
-                            returncode,
-                            [px1, py1, pz1]
-                        ] = sim.simxGetObjectPosition(clientID,
-                                                      robotHandle,
-                                                      -1, sim.simx_opmode_oneshot_wait)
+                #         print("modo 2.1: corrigindo lateral esquerdo")
+                #         [
+                #             returncode,
+                #             [px1, py1, pz1]
+                #         ] = sim.simxGetObjectPosition(clientID,
+                #                                       robotHandle,
+                #                                       -1, sim.simx_opmode_oneshot_wait)
 
-                        [
-                            returncode,
-                            [palpha, pbeta, pgamma]
-                        ] = sim.simxGetObjectOrientation(clientID,
-                                                         robotHandle,
-                                                         -1,
-                                                         sim.simx_opmode_oneshot_wait)
+                #         [
+                #             returncode,
+                #             [palpha, pbeta, pgamma]
+                #         ] = sim.simxGetObjectOrientation(clientID,
+                #                                          robotHandle,
+                #                                          -1,
+                #                                          sim.simx_opmode_oneshot_wait)
 
-                        # MHZ: Linter avisa que rad_ori pode ser unbound.
-                        if pgamma > 0:
-                            ang_ori = ((pgamma*180)/math.pi)
-                        elif pgamma < 0:
-                            ang_ori = -1*(-1*((pgamma*180)/math.pi)-180)+180
+                #         # MHZ: Linter avisa que rad_ori pode ser unbound.
+                #         if pgamma > 0:
+                #             ang_ori = ((pgamma*180)/math.pi)
+                #         elif pgamma < 0:
+                #             ang_ori = -1*(-1*((pgamma*180)/math.pi)-180)+180
 
-                        ang_ori = float("%0.2f" %(ang_ori))
-                        print('ang orient = ', ang_ori)
+                #         ang_ori = float("%0.2f" %(ang_ori))
+                #         print('ang orient = ', ang_ori)
                         
-                        kp = 1
-                        v2 = 0.2
+                #         kp = 1
+                #         v2 = 0.2
 
-                        sim.simxSetJointTargetVelocity(clientID,
-                                                       r_wheel,
-                                                       v1+(kp*v2),
-                                                       sim.simx_opmode_oneshot_wait)
-                        sim.simxSetJointTargetVelocity(clientID,
-                                                       l_wheel,
-                                                       v1-(kp*v2),
-                                                       sim.simx_opmode_oneshot_wait)
-                        print('ang orient = ', ang_ori)
-                        print('estou girando parcialmente')
+                #         sim.simxSetJointTargetVelocity(clientID,
+                #                                        r_wheel,
+                #                                        v1+(kp*v2),
+                #                                        sim.simx_opmode_oneshot_wait)
+                #         sim.simxSetJointTargetVelocity(clientID,
+                #                                        l_wheel,
+                #                                        v1-(kp*v2),
+                #                                        sim.simx_opmode_oneshot_wait)
+                #         print('ang orient = ', ang_ori)
+                #         print('estou girando parcialmente')
 
-                        detectionState0, detectpx0, detectpy0, detectpz0 = lersensor(clientID,l_sensor)
+                #         detectionStateL, detectpx0, detectpy0, detectpz0 = lersensor(clientID,l_sensor)
         
-                        detectionState1, detectpx1, detectpy1, detectpz1 = lersensor(clientID,r_sensor)
+                #         detectionStateR, detectpx1, detectpy1, detectpz1 = lersensor(clientID,r_sensor)
 
-                        detectionState2, detectpx2, detectpy2, detectpz2 = lersensor(clientID,f_sensor)
+                #         detectionStateF, detectpx2, detectpy2, detectpz2 = lersensor(clientID,f_sensor)
 
 
-                        if (detectionState0 == False or detectionState1 == False) or (detectpz0 <= 0.55 and detectpz1 <= 0.55) or detectpz2 < 0.5:
-                            break
+                #         if (detectionStateL == False or detectionStateR == False) or (detectpz0 <= 0.55 and detectpz1 <= 0.55) or detectpz2 < 0.5:
+                #             break
+                #         time.sleep(0.5)
 
-                elif detectpz1 > 0.55:
+                if detectpz1 > 0.55:
 
                     while abs(ang_ori) >= 2:
 
@@ -320,17 +317,18 @@ if clientID != -1:
                         print('ang orient = ', ang_ori)
                         print('estou girando parcialmente')
 
-                        detectionState0, detectpx0, detectpy0, detectpz0 = lersensor(clientID,l_sensor)
+                        detectionStateL, detectpx0, detectpy0, detectpz0 = lersensor(clientID,l_sensor)
         
-                        detectionState1, detectpx1, detectpy1, detectpz1 = lersensor(clientID,r_sensor)
+                        detectionStateR, detectpx1, detectpy1, detectpz1 = lersensor(clientID,r_sensor)
 
-                        detectionState2, detectpx2, detectpy2, detectpz2 = lersensor(clientID,f_sensor)
+                        detectionStateF, detectpx2, detectpy2, detectpz2 = lersensor(clientID,f_sensor)
 
 
-                        if (detectionState0 == False or detectionState1 == False) or (detectpz0 <= 0.55 and detectpz1 <= 0.55) or detectpz2 < 0.5:
+                        if (detectionStateL == False or detectionStateR == False) or (detectpz0 <= 0.55 and detectpz1 <= 0.55) or detectpz2 < 0.5:
                             break
+                        time.sleep(0.5)
 
-        if (detectionState2 == True and detectpz2 < 0.7):
+        if (detectionStateF == True and detectpz2 < 0.7):
 
             sim.simxSetJointTargetVelocity(clientID,
                                            r_wheel,
@@ -343,7 +341,7 @@ if clientID != -1:
             print('estou parando por condições possíveis')
             print("modo 3: objeto frontal detectado, mudar direção")
 
-            if detectionState0 == True and detectionState1 == True:
+            if detectionStateL == True and detectionStateR == True:
 
                 ang_ori = 0
                 while abs(ang_ori - 180) > 3:
@@ -404,7 +402,7 @@ if clientID != -1:
                                            sim.simx_opmode_oneshot_wait)
             time.sleep(0.1)
 
-            if detectionState0 == False:
+            if detectionStateL == False:
                 ang_ori=0
                 [
                     returncode,
@@ -473,7 +471,7 @@ if clientID != -1:
                                            sim.simx_opmode_oneshot_wait)
             time.sleep(0.5)
 
-            if detectionState1 == False and detectionState2 == True:
+            if detectionStateR == False and detectionStateF == True:
                 ang_ori=0 
                 while abs(ang_ori - 270) > 3:
                     print("modo 3.1: virar 270 graus! virando para direita!")
