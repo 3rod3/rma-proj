@@ -109,11 +109,11 @@ def mov_tras(handleR, handleL, client,v,thet):
     sim.simxSetJointTargetVelocity(client, handleL, 0, sim.simx_opmode_oneshot)
     return thet
 
-def vai_reto(handleR, handleL, client,v,thet,x,y):
+def vai_reto(handleR, handleL, client,v,v2,thet,x,y):
     #anda reto
     sim.simxSetJointTargetVelocity(client, handleR, v, sim.simx_opmode_oneshot)
-    sim.simxSetJointTargetVelocity(client, handleL, v, sim.simx_opmode_oneshot)
-    vl,vang=odomet(v,v)
+    sim.simxSetJointTargetVelocity(client, handleL, v2, sim.simx_opmode_oneshot)
+    vl,vang=odomet(v,v2)
     x +=vl*0.1*math.cos(thet)
     y +=vl*0.1*math.sin(thet)
     print(thet)
@@ -191,7 +191,7 @@ if clientID != -1:
         t = t + dt
         lastTime = now
         # Velocidade básica (linear)
-        v = 0.5
+        v = 0.7
         v1 = 4
 
         # handle de sensores e reitura sensores
@@ -224,9 +224,13 @@ if clientID != -1:
                                       -1,
                                       sim.simx_opmode_oneshot_wait)
         if not detectionStateF or detectpz2 > 0.7:
-            x,y,thet=vai_reto(r_wheel, l_wheel, clientID,v1,thet,x_glob,y_glob)
+            if detectionStateR and detectpz1<0.4:
+                 x,y,thet=vai_reto(r_wheel, l_wheel, clientID,v1+1,v1,thet,x_glob,y_glob)
+            if detectionStateL and detectpz0<0.4:
+                 x,y,thet=vai_reto(r_wheel, l_wheel, clientID,v1,v1+1,thet,x_glob,y_glob)
+            x,y,thet=vai_reto(r_wheel, l_wheel, clientID,v1,v1,thet,x_glob,y_glob)
             print('estou andando reto')
-        time.sleep(0.1)
+        time.sleep(0.05)
 
         if (detectionStateF == True and detectpz2 < 0.7):
 
