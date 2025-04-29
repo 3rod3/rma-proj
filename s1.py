@@ -10,31 +10,9 @@
 # should be a corresponding call to simxFinish at the end!
 
 
-# =======================================================================
-# MHZ: Antes o código tinha um try-except pra fazer load do sim. Como sim é um
-# arquivo no mesmo diretório, tirei o try-except. Antes tinha a mensagem abaixo
-# em casos de falha ao carregar o arquivo sim.
-
-# print('--------------------------------------------------------------')
-# print('"sim.py" could not be imported. This means very probably that')
-# print('either "sim.py" or the remoteApi library could not be found.')
-# print('Make sure both are in the same folder as this file,')
-# print('or appropriately adjust the file "sim.py"')
-# print('--------------------------------------------------------------')
-# print('')
-# =======================================================================
-
 import sim
 import time
 import math
-
-# ===================
-# MHZ: Os import abaixo não são usados, mas estavam aqui antes.
-# import random
-# import matplotlib
-# ===================
-
-#Henri: criei uma função para ler e salvar informações dos sensores que são lidos varias vezes
 
 def lersensor(clientID,sensor):
   [
@@ -44,12 +22,6 @@ def lersensor(clientID,sensor):
     detectedObjectHandle,
     detectedSurfaceNormalVector
   ] = sim.simxReadProximitySensor(clientID,sensor,sim.simx_opmode_oneshot_wait)
-
-  print("return code = ", returncode,
-        "dectetionstate = ", detectionState,
-        "detectedPoint = ", [detectpx, detectpy, detectpz],
-        "detectedObjectHandle = ", detectedObjectHandle,
-        "detectedSurfaceNormalVector = ", detectedSurfaceNormalVector)
 
   detectpx = float("%0.2f" % (detectpx))
   detectpy = float("%0.2f" % (detectpy))
@@ -68,9 +40,6 @@ def odomet(phid, phie):
     return v, omega
 
 def mov_dir(handleR, handleL, client,v,thet):
-    # mudar para a direita
-    # sleep
-    # return vazio
     vl,vang=odomet(-v,v)
     tempo = abs(math.pi/(2*vang))
     thet+=vang*tempo
@@ -82,9 +51,6 @@ def mov_dir(handleR, handleL, client,v,thet):
     return thet
 
 def mov_esq(handleR, handleL, client,v,thet):
-    # mudar para a esquerda 
-    # sleep
-    # return vazio
     vl,vang=odomet(v,-v)
     tempo = abs(math.pi/(2*vang))
     thet+=vang*tempo
@@ -96,9 +62,6 @@ def mov_esq(handleR, handleL, client,v,thet):
     return thet
     
 def mov_tras(handleR, handleL, client,v,thet):
-    # gira 180º
-    # sleep
-    # return vazio
     vl,vang=odomet(v,-v)
     sim.simxSetJointTargetVelocity(client, handleR, v, sim.simx_opmode_oneshot)
     sim.simxSetJointTargetVelocity(client, handleL, -v, sim.simx_opmode_oneshot)
@@ -116,9 +79,8 @@ def vai_reto(handleR, handleL, client,v,v2,thet,x,y):
     vl,vang=odomet(v,v2)
     x +=vl*0.1*math.cos(thet)
     y +=vl*0.1*math.sin(thet)
-    print(thet)
     time.sleep(0.1)
-    return x,y,thet
+    return x, y, thet
 
 print('Program started')
 sim.simxFinish(-1)  # just in case, close all opened connections
@@ -181,7 +143,8 @@ if clientID != -1:
     t = 0
     startTime = time.time()
     lastTime = startTime
-
+    distanciaL=0
+    distanciaR=0
     print("tempo do momento:")
     while px1 != 4 and py1 != -4:
         # código de tempo
@@ -202,7 +165,7 @@ if clientID != -1:
 
         returnCode, r_sensor = sim.simxGetObjectHandle(clientID,
                                                        'sensor1',
-                                                       sim.simx_opmode_oneshot_wait)
+                                                       sim.simx_opmode_oneshot_wait) 
         print('Handle return code:', (returnCode, r_sensor))
 
         returnCode, f_sensor = sim.simxGetObjectHandle(clientID,
@@ -224,10 +187,17 @@ if clientID != -1:
                                       -1,
                                       sim.simx_opmode_oneshot_wait)
         if not detectionStateF or detectpz2 > 0.7:
-            if detectionStateR and detectpz1<0.4:
-                 x,y,thet=vai_reto(r_wheel, l_wheel, clientID,v1+1,v1,thet,x_glob,y_glob)
-            if detectionStateL and detectpz0<0.4:
-                 x,y,thet=vai_reto(r_wheel, l_wheel, clientID,v1,v1+1,thet,x_glob,y_glob)
+            if detectionStateR and distanciaR-detectpz1>0.001:
+                 x,y,thet=vai_reto(r_wheel, l_wheel, clientID,v1+0.1,v1,thet,x_glob,y_glob)
+            elif detectionStateL and distanciaL-detectpz0>0.001:
+                 x,y,thet=vai_reto(r_wheel, l_wheel, clientID,v1,v1+0.1,thet,x_glob,y_glob)
+            elif detectionStateR and distanciaR-detectpz1<-0.001:
+                 x,y,thet=vai_reto(r_wheel, l_wheel, clientID,v1-0.1,v1,thet,x_glob,y_glob)
+            elif detectionStateL and distanciaL-detectpz0<-0.001:
+                 x,y,thet=vai_reto(r_wheel, l_wheel, clientID,v1,v1-0.1,thet,x_glob,y_glob)
+            print("distancia em parede",distanciaR-detectpz1)
+            distanciaR=detectpz1
+            distanciaL=detectpz0          
             x,y,thet=vai_reto(r_wheel, l_wheel, clientID,v1,v1,thet,x_glob,y_glob)
             print('estou andando reto')
         time.sleep(0.05)
@@ -246,8 +216,7 @@ if clientID != -1:
             print("modo 3: objeto frontal detectado, mudar direção")
 
             if detectionStateL == True and detectionStateR == True:
-                    print("modo 3.1: virar 180 graus!")
-
+                    print("modo 3.0: virar 180 graus!")
                     thet=mov_tras(r_wheel, l_wheel, clientID,v,thet)
             elif detectionStateR == False: 
                     print("modo 3.1: virar 270 graus! virando para direita!")
@@ -255,7 +224,6 @@ if clientID != -1:
             elif detectionStateL == False:
                     print("modo 3.2: virar 90 graus! virando para esquerda!")
                     thet=mov_esq(r_wheel, l_wheel, clientID,v,thet)
-            
 
         now = time.time()
         dt = now - lastTime
