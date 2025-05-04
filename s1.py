@@ -46,7 +46,7 @@ def mov_dir(handleR, handleL, client,v,thet):
     thet+=vang*tempo
     sim.simxSetJointTargetVelocity(client, handleR, -v, sim.simx_opmode_oneshot)
     sim.simxSetJointTargetVelocity(client, handleL, v, sim.simx_opmode_oneshot)
-    time.sleep(tempo+0.5)
+    time.sleep(tempo+0.3)
     sim.simxSetJointTargetVelocity(client, handleR, 0, sim.simx_opmode_oneshot)
     sim.simxSetJointTargetVelocity(client, handleL, 0, sim.simx_opmode_oneshot)
     return thet
@@ -57,7 +57,7 @@ def mov_esq(handleR, handleL, client,v,thet):
     thet+=vang*tempo
     sim.simxSetJointTargetVelocity(client, handleR, v, sim.simx_opmode_oneshot)
     sim.simxSetJointTargetVelocity(client, handleL, -v, sim.simx_opmode_oneshot)
-    time.sleep(tempo+0.5)
+    time.sleep(tempo+0.3)
     sim.simxSetJointTargetVelocity(client, handleR, 0, sim.simx_opmode_oneshot)
     sim.simxSetJointTargetVelocity(client, handleL, 0, sim.simx_opmode_oneshot)
     return thet
@@ -68,7 +68,7 @@ def mov_tras(handleR, handleL, client,v,thet):
     sim.simxSetJointTargetVelocity(client, handleL, -v, sim.simx_opmode_oneshot)
     tempo = abs(math.pi/(vang))
     thet+=vang*tempo
-    time.sleep(tempo+0.5)
+    time.sleep(tempo+0.3)
     sim.simxSetJointTargetVelocity(client, handleR, 0, sim.simx_opmode_oneshot)
     sim.simxSetJointTargetVelocity(client, handleL, 0, sim.simx_opmode_oneshot)
     return thet
@@ -185,7 +185,7 @@ if clientID != -1:
 
         detectionStateT, detectpx3, detectpy3, detectpz3 = lersensor(clientID,t_sensor)
 
-        if not detectionStateF or detectpz2 > 0.9:
+        if not detectionStateF or detectpz2 > 0.8:
             if detectionStateR and detectpz1<0.4:
                 x,y,thet=vai_reto(r_wheel, l_wheel, clientID,v1+1,v1,thet,x_glob,y_glob)
                 print("virando aaaaaaaa")
@@ -195,25 +195,24 @@ if clientID != -1:
                 print("virando bbbbbbbb")
                 time.sleep(0.05)
             if detectionStateR and distanciaR-detectpz1>0.0001:
-                 x,y,thet=vai_reto(r_wheel, l_wheel, clientID,v1+0.5,v1,thet,x_glob,y_glob)
+                 x,y,thet=vai_reto(r_wheel, l_wheel, clientID,v1+0.2,v1,thet,x_glob,y_glob)
                  time.sleep(0.05)
                  print("leve curva pra esquerda")
             elif detectionStateL and distanciaL-detectpz0>0.0001:
-                 x,y,thet=vai_reto(r_wheel, l_wheel, clientID,v1,v1+0.5,thet,x_glob,y_glob)
+                 x,y,thet=vai_reto(r_wheel, l_wheel, clientID,v1,v1+0.2,thet,x_glob,y_glob)
                  time.sleep(0.05)
             elif detectionStateR and distanciaR-detectpz1<-0.0001:
-                 x,y,thet=vai_reto(r_wheel, l_wheel, clientID,v1-0.5,v1,thet,x_glob,y_glob)
+                 x,y,thet=vai_reto(r_wheel, l_wheel, clientID,v1-0.2,v1,thet,x_glob,y_glob)
                  time.sleep(0.05)
             elif detectionStateL and distanciaL-detectpz0<-0.0001:
-                 x,y,thet=vai_reto(r_wheel, l_wheel, clientID,v1,v1-0.5,thet,x_glob,y_glob)
+                 x,y,thet=vai_reto(r_wheel, l_wheel, clientID,v1,v1-0.2,thet,x_glob,y_glob)
                  time.sleep(0.05)
             distanciaR=detectpz1
             distanciaL=detectpz0          
             x,y,thet=vai_reto(r_wheel, l_wheel, clientID,v1,v1,thet,x_glob,y_glob)
             print('estou andando reto')
             time.sleep(0.01)
-        elif (detectionStateF == True and detectpz2 < 0.7):
-
+        elif (detectionStateF == True and detectpz2 < 0.6):
             sim.simxSetJointTargetVelocity(clientID,
                                            l_wheel,
                                            0,
@@ -224,70 +223,44 @@ if clientID != -1:
                                            sim.simx_opmode_oneshot)
             print('estou parando por condições possíveis')
             print("modo 3: objeto frontal detectado, mudar direção")
-            if detectionStateL == False and detectionStateR == False and true==1:
-                            print("modo 3.0: virar 180 graus!")
-                            thet=mov_tras(r_wheel, l_wheel, clientID,v,thet)
-            elif detectionStateL == True and detectionStateR == True:
+            if detectionStateL == True and detectionStateR == True:
                     print("modo 3.0: virar 180 graus!")
                     thet=mov_tras(r_wheel, l_wheel, clientID,v,thet)
-                    true+=1
-                    while true==2:
-                          detectionStateL, detectpx0, detectpy0, detectpz0 = lersensor(clientID,l_sensor)
-        
-                          detectionStateR, detectpx1, detectpy1, detectpz1 = lersensor(clientID,r_sensor)
-
-                          detectionStateF, detectpx2, detectpy2, detectpz2 = lersensor(clientID,f_sensor)
-
-                          detectionStateT, detectpx3, detectpy3, detectpz3 = lersensor(clientID,t_sensor)
-
-                          if not detectionStateF or detectpz2 > 0.8:
-                            if detectionStateR and detectpz1<0.4:
-                                 x,y,thet=vai_reto(r_wheel, l_wheel, clientID,v1+1,v1,thet,x_glob,y_glob)
-                                 print("virando aaaaaaaa")
-                                 time.sleep(0.05)
-                            elif detectionStateL and detectpz0<0.4:
-                                x,y,thet=vai_reto(r_wheel, l_wheel, clientID,v1,v1+1,thet,x_glob,y_glob)
-                                print("virando bbbbbbbb")
-                                time.sleep(0.05)
-                            if detectionStateR and distanciaR-detectpz1>0.00001:
-                              x,y,thet=vai_reto(r_wheel, l_wheel, clientID,v1+0.2,v1,thet,x_glob,y_glob)
-                              time.sleep(0.1)
-                            elif detectionStateL and distanciaL-detectpz0>0.00001:
-                                 x,y,thet=vai_reto(r_wheel, l_wheel, clientID,v1,v1+0.2,thet,x_glob,y_glob)
-                                 time.sleep(0.1)
-                            elif detectionStateR and distanciaR-detectpz1<-0.00001:
-                                 x,y,thet=vai_reto(r_wheel, l_wheel, clientID,v1-0.2,v1,thet,x_glob,y_glob)
-                                 time.sleep(0.1)
-                            elif detectionStateL and distanciaL-detectpz0<-0.00001:
-                                x,y,thet=vai_reto(r_wheel, l_wheel, clientID,v1,v1-0.2,thet,x_glob,y_glob)
-                                time.sleep(0.1) 
-                            print("distancia em parede",distanciaR-detectpz1)
-                            distanciaR=detectpz1
-                            distanciaL=detectpz0          
-                            x,y,thet=vai_reto(r_wheel, l_wheel, clientID,v1,v1,thet,x_glob,y_glob)
-                            print('estou andando reto')
-                            time.sleep(0.05)
-                          elif detectionStateR == False: 
-                            print("modo 3.1: virar 270 graus! virando para direita!")
-                            thet=mov_dir(r_wheel, l_wheel, clientID,v,thet)
-                          elif detectionStateL == False:
-                            print("modo 3.2: virar 90 graus! virando para esquerda!")
-                            thet=mov_esq(r_wheel, l_wheel, clientID,v,thet)
-                          if (detectionStateR == False and detectionStateF == False and detectionStateT == False ):
-                                thet=mov_dir(r_wheel, l_wheel, clientID,v,thet)
-                                true = 0
-                          elif (detectionStateL == False and detectionStateF == False and detectionStateT == False ):
-                                thet=mov_esq(r_wheel, l_wheel, clientID,v,thet)
-                                true = 0
             elif detectionStateR == False: 
                     print("modo 3.1: virar 270 graus! virando para direita!")
                     distanciaL=1
                     thet=mov_dir(r_wheel, l_wheel, clientID,v,thet)
+                    detectionStateR, detectpx1, detectpy1, detectpz1 = lersensor(clientID,r_sensor)
+                    detectionStateF, detectpx2, detectpy2, detectpz2 = lersensor(clientID,f_sensor)
+                    detectionStateT, detectpx3, detectpy3, detectpz3 = lersensor(clientID,t_sensor)
+                    while detectionStateT == False and detectionStateF == False and detectionStateR == False:
+                          if detectionStateR and distanciaR-detectpz1>0.0001:
+                                x,y,thet=vai_reto(r_wheel, l_wheel, clientID,v1+0.2,v1,thet,x_glob,y_glob)
+                                time.sleep(0.05)
+                                print("leve curva pra esquerda")
+                          elif detectionStateL and distanciaL-detectpz0>0.0001:
+                                x,y,thet=vai_reto(r_wheel, l_wheel, clientID,v1,v1+0.2,thet,x_glob,y_glob)
+                                time.sleep(0.05)
+                          elif detectionStateR and distanciaR-detectpz1<-0.0001:
+                                x,y,thet=vai_reto(r_wheel, l_wheel, clientID,v1-0.2,v1,thet,x_glob,y_glob)
+                                time.sleep(0.05)
+                          elif detectionStateL and distanciaL-detectpz0<-0.0001:
+                                x,y,thet=vai_reto(r_wheel, l_wheel, clientID,v1,v1-0.2,thet,x_glob,y_glob)
+                                time.sleep(0.05)
+                          vai_reto(r_wheel,l_wheel,clientID,v1,v1,thet,x_glob,y_glob)
+                          detectionStateR, detectpx1, detectpy1, detectpz1 = lersensor(clientID,r_sensor)
+                          detectionStateF, detectpx2, detectpy2, detectpz2 = lersensor(clientID,f_sensor)
+                          detectionStateT, detectpx3, detectpy3, detectpz3 = lersensor(clientID,t_sensor)
             elif detectionStateL == False:
                     print("modo 3.2: virar 90 graus! virando para esquerda!")
                     distanciaR=1
                     thet=mov_esq(r_wheel, l_wheel, clientID,v,thet)
-
+        if (detectionStateR == False and detectionStateF == False and detectionStateT == False):
+                x,y,thet=vai_reto(r_wheel, l_wheel, clientID,v1,v1,thet,x_glob,y_glob)
+                time.sleep(0.175)
+                thet=mov_dir(r_wheel, l_wheel, clientID,v,thet)
+                x,y,thet=vai_reto(r_wheel, l_wheel, clientID,v1,v1,thet,x_glob,y_glob)
+                time.sleep(1.5)
         now = time.time()
         dt = now - lastTime
         t = t + dt
