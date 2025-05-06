@@ -46,7 +46,7 @@ def mov_dir(handleR, handleL, client,v,thet):
     thet+=vang*tempo
     sim.simxSetJointTargetVelocity(client, handleR, -v, sim.simx_opmode_oneshot)
     sim.simxSetJointTargetVelocity(client, handleL, v, sim.simx_opmode_oneshot)
-    time.sleep(tempo+0.3)
+    time.sleep(tempo+0.2)
     sim.simxSetJointTargetVelocity(client, handleR, 0, sim.simx_opmode_oneshot)
     sim.simxSetJointTargetVelocity(client, handleL, 0, sim.simx_opmode_oneshot)
     return thet
@@ -57,7 +57,7 @@ def mov_esq(handleR, handleL, client,v,thet):
     thet+=vang*tempo
     sim.simxSetJointTargetVelocity(client, handleR, v, sim.simx_opmode_oneshot)
     sim.simxSetJointTargetVelocity(client, handleL, -v, sim.simx_opmode_oneshot)
-    time.sleep(tempo+0.3)
+    time.sleep(tempo+0.2)
     sim.simxSetJointTargetVelocity(client, handleR, 0, sim.simx_opmode_oneshot)
     sim.simxSetJointTargetVelocity(client, handleL, 0, sim.simx_opmode_oneshot)
     return thet
@@ -68,7 +68,7 @@ def mov_tras(handleR, handleL, client,v,thet):
     sim.simxSetJointTargetVelocity(client, handleL, -v, sim.simx_opmode_oneshot)
     tempo = abs(math.pi/(vang))
     thet+=vang*tempo
-    time.sleep(tempo+0.3)
+    time.sleep(tempo+0.2)
     sim.simxSetJointTargetVelocity(client, handleR, 0, sim.simx_opmode_oneshot)
     sim.simxSetJointTargetVelocity(client, handleL, 0, sim.simx_opmode_oneshot)
     return thet
@@ -145,7 +145,7 @@ if clientID != -1:
     distanciaL=0
     distanciaR=0
      # Velocidade básica (linear)
-    v = 0.6
+    v = 1
     v1 = 5
      # handle de sensores e reitura sensores
     returnCode, l_sensor = sim.simxGetObjectHandle(clientID,
@@ -185,27 +185,27 @@ if clientID != -1:
 
         detectionStateT, detectpx3, detectpy3, detectpz3 = lersensor(clientID,t_sensor)
 
-        if not detectionStateF or detectpz2 > 0.9:
+        if not detectionStateF or detectpz2 > 0.8:
             if detectionStateR and detectpz1<0.35:
                 vai_reto(r_wheel, l_wheel, clientID,v1+1,v1,thet,x_glob,y_glob)
                 print("virando aaaaaaaa")
             elif detectionStateL and detectpz0<0.35:
                 vai_reto(r_wheel, l_wheel, clientID,v1,v1+1,thet,x_glob,y_glob)
                 print("virando bbbbbbbb")
-            if detectionStateR and distanciaR-detectpz1>0.000000000:
+            if detectionStateR and distanciaR-detectpz1>0:
                  vai_reto(r_wheel, l_wheel, clientID,v1+0.4,v1,thet,x_glob,y_glob)
                  print("leve curva pra esquerda")
-            elif detectionStateL and distanciaL-detectpz0>0.000000000:
+            elif detectionStateL and distanciaL-detectpz0>0:
                  vai_reto(r_wheel, l_wheel, clientID,v1,v1+0.4,thet,x_glob,y_glob)
-            elif detectionStateR and distanciaR-detectpz1<-0.000000000:
+            elif detectionStateR and distanciaR-detectpz1<0:
                  vai_reto(r_wheel, l_wheel, clientID,v1-0.4,v1,thet,x_glob,y_glob)
-            elif detectionStateL and distanciaL-detectpz0<-0.000000000:
+            elif detectionStateL and distanciaL-detectpz0<0:
                  vai_reto(r_wheel, l_wheel, clientID,v1,v1-0.4,thet,x_glob,y_glob)
             else:
                  vai_reto(r_wheel, l_wheel, clientID,v1,v1,thet,x_glob,y_glob)
             distanciaR=detectpz1
             distanciaL=detectpz0          
-            time.sleep(0.03)
+            time.sleep(0.01)
         elif (detectionStateF == True and detectpz2 < 0.7):
             sim.simxSetJointTargetVelocity(clientID,
                                            l_wheel,
@@ -228,19 +228,19 @@ if clientID != -1:
                     detectionStateF, detectpx2, detectpy2, detectpz2 = lersensor(clientID,f_sensor)
                     detectionStateT, detectpx3, detectpy3, detectpz3 = lersensor(clientID,t_sensor)
                     while detectionStateT == False and detectionStateF == False and detectionStateR == False:
-                          if detectionStateR and distanciaR-detectpz1>0.00001:
+                          if detectionStateR and distanciaR-detectpz1>0:
                                 x,y,thet=vai_reto(r_wheel, l_wheel, clientID,v1+0.4,v1,thet,x_glob,y_glob)
                                 time.sleep(0.05)
                                 print("leve curva pra esquerda")
-                          elif detectionStateL and distanciaL-detectpz0>0.000000:
+                          elif detectionStateL and distanciaL-detectpz0>0:
                                 x,y,thet=vai_reto(r_wheel, l_wheel, clientID,v1,v1+0.4,thet,x_glob,y_glob)
-                                time.sleep(0.03)
-                          elif detectionStateR and distanciaR-detectpz1<-0.000000:
+                                time.sleep(0.01)
+                          elif detectionStateR and distanciaR-detectpz1<0:
                                 x,y,thet=vai_reto(r_wheel, l_wheel, clientID,v1-0.4,v1,thet,x_glob,y_glob)
-                                time.sleep(0.03)
-                          elif detectionStateL and distanciaL-detectpz0<-0.0000000:
+                                time.sleep(0.01)
+                          elif detectionStateL and distanciaL-detectpz0<0:
                                 x,y,thet=vai_reto(r_wheel, l_wheel, clientID,v1,v1-0.4,thet,x_glob,y_glob)
-                                time.sleep(0.03)
+                                time.sleep(0.01)
                           vai_reto(r_wheel,l_wheel,clientID,v1,v1,thet,x_glob,y_glob)
                           distanciaR=detectpz1
                           distanciaL=detectpz0
@@ -256,19 +256,19 @@ if clientID != -1:
                 time.sleep(0.17)
                 thet=mov_dir(r_wheel, l_wheel, clientID,v,thet)
                 while detectionStateT == False and detectionStateF == False and detectionStateR == False:
-                          if detectionStateR and distanciaR-detectpz1>0.0000000:
+                          if detectionStateR and distanciaR-detectpz1>0:
                                 x,y,thet=vai_reto(r_wheel, l_wheel, clientID,v1+0.4,v1,thet,x_glob,y_glob)
-                                time.sleep(0.03)
+                                time.sleep(0.01)
                                 print("leve curva pra esquerda")
-                          elif detectionStateL and distanciaL-detectpz0>0.0000000:
+                          elif detectionStateL and distanciaL-detectpz0>0:
                                 x,y,thet=vai_reto(r_wheel, l_wheel, clientID,v1,v1+0.4,thet,x_glob,y_glob)
-                                time.sleep(0.03)
-                          elif detectionStateR and distanciaR-detectpz1<-0.0000000:
+                                time.sleep(0.01)
+                          elif detectionStateR and distanciaR-detectpz1<0:
                                 x,y,thet=vai_reto(r_wheel, l_wheel, clientID,v1-0.4,v1,thet,x_glob,y_glob)
-                                time.sleep(0.03)
-                          elif detectionStateL and distanciaL-detectpz0<-0.0000000:
+                                time.sleep(0.01)
+                          elif detectionStateL and distanciaL-detectpz0<0:
                                 x,y,thet=vai_reto(r_wheel, l_wheel, clientID,v1,v1-0.4,thet,x_glob,y_glob)
-                                time.sleep(0.03)
+                                time.sleep(0.01)
                           vai_reto(r_wheel,l_wheel,clientID,v1,v1,thet,x_glob,y_glob)
                           distanciaR=detectpz1
                           distanciaL=detectpz0
