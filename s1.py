@@ -22,9 +22,6 @@ def lersensor(clientID,sensor):
     detectedObjectHandle,
     detectedSurfaceNormalVector
   ] = sim.simxReadProximitySensor(clientID,sensor,sim.simx_opmode_oneshot_wait)
-  detectpx = float("%0.2f" % (detectpx))
-  detectpy = float("%0.2f" % (detectpy))
-  detectpz = float("%0.2f" % (detectpz))
   return detectionState, detectpx, detectpy, detectpz
 
 def odomet(phid, phie):
@@ -39,7 +36,7 @@ def mov_dir(handleR, handleL, client,v):
     tempo = abs(math.pi/(2*vang))
     sim.simxSetJointTargetVelocity(client, handleR, -v, sim.simx_opmode_oneshot)
     sim.simxSetJointTargetVelocity(client, handleL, v, sim.simx_opmode_oneshot)
-    time.sleep(tempo+0.2)
+    time.sleep(tempo+0.25)
     sim.simxSetJointTargetVelocity(client, handleR, 0, sim.simx_opmode_oneshot)
     sim.simxSetJointTargetVelocity(client, handleL, 0, sim.simx_opmode_oneshot)
 
@@ -48,7 +45,7 @@ def mov_esq(handleR, handleL, client,v):
     tempo = abs(math.pi/(2*vang))
     sim.simxSetJointTargetVelocity(client, handleR, v, sim.simx_opmode_oneshot)
     sim.simxSetJointTargetVelocity(client, handleL, -v, sim.simx_opmode_oneshot)
-    time.sleep(tempo+0.2)
+    time.sleep(tempo+0.25)
     sim.simxSetJointTargetVelocity(client, handleR, 0, sim.simx_opmode_oneshot)
     sim.simxSetJointTargetVelocity(client, handleL, 0, sim.simx_opmode_oneshot)
     
@@ -64,7 +61,7 @@ def mov_tras(handleR, handleL, client,v):
 def vai_reto(handleR, handleL, client,v,v2):
     sim.simxSetJointTargetVelocity(client, handleR, v, sim.simx_opmode_oneshot)
     sim.simxSetJointTargetVelocity(client, handleL, v2, sim.simx_opmode_oneshot)
-    time.sleep(0.03)
+    time.sleep(0.01)
 
 print('Program started')
 sim.simxFinish(-1)  # just in case, close all opened connections
@@ -132,14 +129,14 @@ if clientID != -1:
                 vai_reto(r_wheel, l_wheel, clientID,v1,v1+1)
                 print("virando bbbbbbbb")
             if detectionStateR and distanciaR-detectpz1>0:
-                 vai_reto(r_wheel, l_wheel, clientID,v1+0.5,v1)
+                 vai_reto(r_wheel, l_wheel, clientID,v1+0.4,v1)
                  print("leve curva pra esquerda")
             elif detectionStateL and distanciaL-detectpz0>0:
-                 vai_reto(r_wheel, l_wheel, clientID,v1,v1+0.5)
+                 vai_reto(r_wheel, l_wheel, clientID,v1,v1+0.4)
             elif detectionStateR and distanciaR-detectpz1<0:
-                 vai_reto(r_wheel, l_wheel, clientID,v1-0.5,v1)
+                 vai_reto(r_wheel, l_wheel, clientID,v1-0.4,v1)
             elif detectionStateL and distanciaL-detectpz0<0:
-                 vai_reto(r_wheel, l_wheel, clientID,v1,v1-0.5)
+                 vai_reto(r_wheel, l_wheel, clientID,v1,v1-0.4)
             else:
                  vai_reto(r_wheel, l_wheel, clientID,v1,v1)
             distanciaR=detectpz1
