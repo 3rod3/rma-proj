@@ -129,14 +129,14 @@ if clientID != -1:
                 vai_reto(r_wheel, l_wheel, clientID,v1,v1+1)
                 print("virando bbbbbbbb")
             if detectionStateR and distanciaR-detectpz1>0:
-                 vai_reto(r_wheel, l_wheel, clientID,v1+0.4,v1)
+                 vai_reto(r_wheel, l_wheel, clientID,v1+0.5,v1)
                  print("leve curva pra esquerda")
             elif detectionStateL and distanciaL-detectpz0>0:
-                 vai_reto(r_wheel, l_wheel, clientID,v1,v1+0.4)
+                 vai_reto(r_wheel, l_wheel, clientID,v1,v1+0.5)
             elif detectionStateR and distanciaR-detectpz1<0:
-                 vai_reto(r_wheel, l_wheel, clientID,v1-0.4,v1)
+                 vai_reto(r_wheel, l_wheel, clientID,v1-0.5,v1)
             elif detectionStateL and distanciaL-detectpz0<0:
-                 vai_reto(r_wheel, l_wheel, clientID,v1,v1-0.4)
+                 vai_reto(r_wheel, l_wheel, clientID,v1,v1-0.5)
             else:
                  vai_reto(r_wheel, l_wheel, clientID,v1,v1)
             distanciaR=detectpz1
@@ -193,17 +193,17 @@ if clientID != -1:
                 mov_dir(r_wheel, l_wheel, clientID,v)
                 while detectionStateT == False and detectionStateF == False and detectionStateR == False:
                           if detectionStateR and distanciaR-detectpz1>0:
-                                vai_reto(r_wheel, l_wheel, clientID,v1+0.4,v1)
+                                vai_reto(r_wheel, l_wheel, clientID,v1+0.5,v1)
                                 time.sleep(0.01)
                                 print("leve curva pra esquerda")
                           elif detectionStateL and distanciaL-detectpz0>0:
-                                vai_reto(r_wheel, l_wheel, clientID,v1,v1+0.4)
+                                vai_reto(r_wheel, l_wheel, clientID,v1,v1+0.5)
                                 time.sleep(0.01)
                           elif detectionStateR and distanciaR-detectpz1<0:
-                                vai_reto(r_wheel, l_wheel, clientID,v1-0.4,v1)
+                                vai_reto(r_wheel, l_wheel, clientID,v1-0.5,v1)
                                 time.sleep(0.01)
                           elif detectionStateL and distanciaL-detectpz0<0:
-                                vai_reto(r_wheel, l_wheel, clientID,v1,v1-0.4)
+                                vai_reto(r_wheel, l_wheel, clientID,v1,v1-0.5)
                                 time.sleep(0.01)
                           vai_reto(r_wheel,l_wheel,clientID,v1,v1)
                           distanciaR=detectpz1
